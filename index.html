@@ -599,6 +599,7 @@
                 if (building.id === "cookie4") building.cost = 2500;
                 if (building.id === "cookie5") building.cost = 15000;
                 if (building.id === "luckyCookie") building.cost = 0;
+                if (building.id === "fortuneCookie") building.cost = 0;
             });
 
             items.forEach(item => {
@@ -837,9 +838,19 @@
             {
                 id: 'luckyCookie',
                 name: 'Lucky Cookie',
-                description: 'Generates +100 cookies per second. Can be obtained from Lucky Blocks.',
+                description: 'Generates +100 cookies per second. Could be obtained from Lucky Blocks.',
                 cost: 0,
                 cps: 100,
+                owned: 0,
+                multiplier: 1,
+                unbuyable: true
+            },
+            {
+                id: 'fortuneCookie',
+                name: 'Fortune Cookie',
+                description: 'Generates +500 cookies per second. Can be obtained from Lucky Blocks.',
+                cost: 0,
+                cps: 500,
                 owned: 0,
                 multiplier: 1,
                 unbuyable: true
@@ -864,19 +875,19 @@
                     {
                         id: 'basicLuckyBlock',
                         name: 'Basic Lucky Block',
-                        description: '70% Nothing, 15% 1-10k Cookies, 9.9% Cookie Chest, 5% Cookie Potion, 0.1% Lucky Cookie. Can be obtained by clicking.',
+                        description: '70% Nothing, 15% 1-100k Cookies, 9.9% Cookie Vault, 5% Cookie Potion, 0.1% Fortune Cookie. Can be obtained by clicking.',
                         owned: 0
                     },
                     {
                         id: 'epicLuckyBlock',
                         name: 'Epic Lucky Block',
-                        description: '40% Nothing, 25% 1-10k Cookies, 20% Cookie Chest, 14.5% Cookie Potion, 0.5% Lucky Cookie. Can be obtained by clicking.',
+                        description: '40% Nothing, 25% 1-100k Cookies, 20% Cookie Vault, 14.5% Cookie Potion, 0.5% Fortune Cookie. Can be obtained by clicking.',
                         owned: 0
                     },
                     {
                         id: 'legendaryLuckyBlock',
                         name: 'Legendary Lucky Block',
-                        description: '15% Nothing, 30% 1-10k Cookies, 25% Cookie Chest, 29% Cookie Potion, 1% Lucky Cookie. Can be obtained by clicking.',
+                        description: '15% Nothing, 30% 1-100k Cookies, 25% Cookie Vault, 29% Cookie Potion, 1% Fortune Cookie. Can be obtained by clicking.',
                         owned: 0
                     }
                 ]
@@ -1314,13 +1325,13 @@
         }
 
         function rollCookieAmount() {
-            return Math.floor(Math.random() * (10000 - 1 + 1)) + 1;
+            return Math.floor(Math.random() * (100000 - 1 + 1)) + 1;
         }
 
-        function grantCookieChest() {
-            const chest = buildings.find(b => b.id === 'cookie5');
-            if (chest) {
-                chest.owned++;
+        function grantCookieVault() {
+            const vault = buildings.find(b => b.id === 'cookie6');
+            if (vault) {
+                vault.owned++;
                 markGameDirty();
                 recalculateCPS();
             }
@@ -1335,23 +1346,23 @@
                 // 70% Nothing
                 resultText = 'Nothing';
             } else if (roll < 85) {
-                // 15% 1-10k Cookies
+                // 15% 1-100k Cookies
                 const amount = rollCookieAmount();
                 cookies += amount;
                 markGameDirty();
                 resultText = `${formatNumber(amount)} Cookies`;
             } else if (roll < 94.9) {
-                // 9.9% Cookie Chest
-                grantCookieChest();
-                resultText = 'Cookie Chest';
+                // 9.9% Cookie Vault
+                grantCookieVault();
+                resultText = 'Cookie Vault';
             } else if (roll < 99.9) {
                 // 5% Cookie Potion
                 grantCookiePotion();
                 resultText = 'Cookie Potion';
             } else {
-                // 0.1% Lucky Cookie
-                grantLuckyCookie();
-                resultText = 'Lucky Cookie';
+                // 0.1% Fortune Cookie
+                grantFortuneCookie();
+                resultText = 'Fortune Cookie';
             }
 
             showLuckyBlockResult(resultText);
@@ -1366,22 +1377,22 @@
                 // 40% Nothing
                 resultText = 'Nothing';
             } else if (roll < 65) {
-                // 25% 1-10k Cookies
+                // 25% 1-100k Cookies
                 const amount = rollCookieAmount();
                 cookies += amount;
                 resultText = `${formatNumber(amount)} Cookies`;
             } else if (roll < 85) {
-                // 20% Cookie Chest
-                grantCookieChest();
-                resultText = 'Cookie Chest';
+                // 20% Cookie Vault
+                grantCookieVault();
+                resultText = 'Cookie Vault';
             } else if (roll < 99.5) {
                 // 14.5% Cookie Potion
                 grantCookiePotion();
                 resultText = 'Cookie Potion';
             } else {
-                // 0.5% Lucky Cookie
-                grantLuckyCookie();
-                resultText = 'Lucky Cookie';
+                // 0.5% Fortune Cookie
+                grantFortuneCookie();
+                resultText = 'Fortune Cookie';
             }
 
             showLuckyBlockResult(resultText);
@@ -1401,22 +1412,22 @@
                 // 15% Nothing
                 resultText = 'Nothing';
             } else if (roll < 45) {
-                // 30% 1-10k Cookies
+                // 30% 1-100k Cookies
                 const amount = rollCookieAmount();
                 cookies += amount;
                 resultText = `${formatNumber(amount)} Cookies`;
             } else if (roll < 70) {
-                // 25% Cookie Chest
-                grantCookieChest();
-                resultText = 'Cookie Chest';
+                // 25% Cookie Vault
+                grantCookieVault();
+                resultText = 'Cookie Vault';
             } else if (roll < 99) {
                 // 29% Cookie Potion
                 grantCookiePotion();
                 resultText = 'Cookie Potion';
             } else {
-                // 1% Lucky Cookie
-                grantLuckyCookie();
-                resultText = 'Lucky Cookie';
+                // 1% Fortune Cookie
+                grantFortuneCookie();
+                resultText = 'Fortune Cookie';
             }
 
             showLuckyBlockResult(resultText);
@@ -1434,10 +1445,10 @@
             }
         }
 
-        function grantLuckyCookie() {
-            const luckyCookie = buildings.find(b => b.id === 'luckyCookie');
-            if (luckyCookie) {
-                luckyCookie.owned++;
+        function grantFortuneCookie() {
+            const fortuneCookie = buildings.find(b => b.id === 'fortuneCookie');
+            if (fortuneCookie) {
+                fortuneCookie.owned++;
                 markGameDirty();
                 recalculateCPS();
             }
